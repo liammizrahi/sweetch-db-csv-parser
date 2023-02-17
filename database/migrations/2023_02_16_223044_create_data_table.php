@@ -17,8 +17,8 @@ return new class extends Migration
             $table->integer('Age');
             $table->integer('Ethnic');
             $table->integer('Sex');
-            $table->integer('Area');
-            $table->integer('count');
+            $table->string('Area');
+            $table->string('count');
             $table->timestamps(); // Not necessary, but Laravel offers using models with created_at and updated_at columns
         });
     }

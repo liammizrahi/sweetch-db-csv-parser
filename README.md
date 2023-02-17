@@ -6,7 +6,7 @@ This is the home task that turn the data CSV to a database table with Laravel
 
 - PHP >= 8.1
 - [Composer](https://getcomposer.org/) Installed
-- MySQL Credendials
+- MySQL Credentials
 
 ## Installation
 You need to clone the repository to your local machine and run these commands:
@@ -26,6 +26,8 @@ DB_DATABASE=laravel
 DB_USERNAME=root
 DB_PASSWORD=
 ```
+For this task I used MySQL, but you can use any other database that Laravel supports.
+![example env](storage/app/screenshots/env_db.png)
 
 ## Task
 To access the task we will need to use the terminal laravel's artisan commands.
@@ -38,9 +40,14 @@ To actually create the table we will have to run this command in the terminal:
 ```sh
 php artisan migrate
 ```
+![Migrations](storage/app/screenshots/migrations.png)
+
+It will create our table with the following scheme:
+![Database Scheme](storage/app/screenshots/database_created_tables.png)
 
 ### Section 2: Convert the CSV to rows in the db
-Unfortunately GitHub allowes files up to 100MB so I couldn't app to the git, so we need to add the CSV file to the path: `storage/app/Data8277.csv`
+Unfortunately GitHub allowes files up to 100MB so I couldn't upload it to the git,
+so we need to add the CSV files to the path like this: `storage/app/Data8277.csv`
 The implementation for this logic located in `app/Console/Commands/ImportData.php`
 
 To run the command:
@@ -48,8 +55,14 @@ To run the command:
 php artisan import:data
 ```
 
+![Import Command](storage/app/screenshots/import_command.png)
+
+We will see that out data will be imported to the database table
+
+![Imported Data](storage/app/screenshots/imported_data.png)
+
 ### Section 3: Queries
-It was bit unclear in the documentation which queries should I provide so I decided to implement both.
+It was a bit unclear in the documentation which queries should I provide so I decided to implement both.
 The implementation for this logic located in `app/Console/Commands/FetchQueries.php`
 
 To run the command:
@@ -57,3 +70,5 @@ To run the command:
 php artisan queries:fetch
 ```
 It should output a table in the terminal with the desired data
+
+![Queries Command](storage/app/screenshots/fetch_query.png)

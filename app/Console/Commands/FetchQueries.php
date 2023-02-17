@@ -26,34 +26,45 @@ class FetchQueries extends Command
      */
     public function handle(): void
     {
-        // we will output a table in the console, this is the header of the table
-        $headers = ['Condition', 'Rows Count'];
-        $data = [];
+        $start_time = hrtime(true);
 
-        /*
-         * It was a bit unclear if the task required these 5 queries to be executed or just one query with all the conditions.
-         * So in order to be sure, I've implemented both.
-         */
-        $data[] = ['Condition' => 'Area = Hampstead', 'Rows Count' => DB::table('data')->where('Area', "Hampstead")->count()];
-        $data[] = ['Condition' => 'Age > 45', 'Rows Count' => DB::table('data')->where('Age', '>', 45)->count()];
-        $data[] = ['Condition' => 'Gender = Female', 'Rows Count' => DB::table('data')->where('Sex', 2)->count()];
-        $data[] = ['Condition' => 'Year = 2018', 'Rows Count' => DB::table('data')->where('Year', 2018)->count()];
-        $data[] = ['Condition' => 'Ethnic = Asian', 'Rows Count' => DB::table('data')->where('Ethnic', "Asian")->count()];
+        // we will output a table in the console, this is the header of the table
+        $headers = ['Description', 'Rows Count'];
 
         // This is the query with all the conditions met.
-        $data[] = [
-            'Condition' => 'ALL CONDITIONS',
+        $data = [[
+            'Description' => 'Result',
             'Rows Count' =>
                 DB::table('data')
-                    ->where('Area', "Hampstead")
-                    ->where('Age', '>', 45)
-                    ->where('Sex', 2)
+                    ->leftJoin('area_lookup', 'area_lookup.Code', '=', 'data.Area')
+                    ->leftJoin('age_lookup', 'age_lookup.Code', '=', 'data.Age')
+                    ->leftJoin('sex_lookup', 'sex_lookup.Code', '=', 'data.Sex')
+                    ->leftJoin('ethnic_lookup', 'ethnic_lookup.Code', '=', 'data.Ethnic')
+                    ->where('area_lookup.Description', "Hampstead")
+                    ->where(function ($query) {
+                        $query->where('age_lookup.SortOrder', '>=', 73)
+                            ->orWhere(function ($subQuery) {
+                                $subQuery->where('age_lookup.SortOrder', '>=', 16)
+                                    ->where('age_lookup.SortOrder', '<=', 27);
+                            });
+                    })
+                    ->where('sex_lookup.Description', 'Female')
                     ->where('Year', 2018)
-                    ->where('Ethnic', "Asian")
+                    ->where('ethnic_lookup.Description', "Asian")
                     ->count()
-        ];
+        ]];
 
         // Output the table in the console
         $this->table($headers, $data);
+
+        // Time measurement
+        $end_time = hrtime(true);
+        $elapsed = ($end_time - $start_time) / 1e+9; // divide by 1 billion to convert from nanoseconds to seconds
+
+        $minutes = floor($elapsed / 60);
+        $seconds = $elapsed % 60;
+
+        $this->output->writeln('');
+        $this->output->writeln("<fg=magenta>Action took <bg=white;fg=black;options=bold>".$minutes." minutes and <bg=white;fg=black;options=bold>".$seconds."</> seconds.</>");
     }
 }
