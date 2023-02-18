@@ -55,12 +55,13 @@ To run the command:
 php artisan import:data
 ```
 
-![Import Command](storage/app/screenshots/import_command.png)
+![Import Command](storage/app/screenshots/import_cmd.png)
 
 We will see that out data will be imported to the database table
 
 ![Imported Data](storage/app/screenshots/imported_data.png)
 
+The action will read the command line by line and the data will be imported in batches of 1000 rows, so it will be faster, but not run out of memory.
 ### Section 3: Queries
 It was a bit unclear in the documentation which queries should I provide so I decided to implement both.
 The implementation for this logic located in `app/Console/Commands/FetchQueries.php`

@@ -51,7 +51,6 @@ class ImportData extends Command
         $bar->start();
 
         foreach ($imports as $import) {
-            $this->output->writeln('Importing '.$import['path'].' to '.$import['table'].' table...');
             $this->import($import['path'], $import['table'], $import['columns']);
             $bar->advance();
         }
@@ -62,6 +61,7 @@ class ImportData extends Command
     }
 
     private function import($path, $table, $columns) {
+        $this->output->title('Importing '.$path.' to '.$table.' table...');
         $start_time = hrtime(true);
 
         // We need to use the storage_path() helper function to get the path to the CSV file that saved inside the storage.
@@ -103,6 +103,7 @@ class ImportData extends Command
         fclose($file);
 
         // Time measurement
+        sleep(1);
         $end_time = hrtime(true);
         $elapsed = ($end_time - $start_time) / 1e+9; // divide by 1 billion to convert from nanoseconds to seconds
 
@@ -110,6 +111,6 @@ class ImportData extends Command
         $seconds = $elapsed % 60;
 
         $this->output->writeln('<fg=green>All data imported successfully to: <bg=white;fg=black;options=bold>'.$table.'</>!</>');
-        $this->output->writeln("Action took <fg=magenta>".$minutes." minutes and <fg=magenta>".$seconds."</> seconds.");
+        $this->output->writeln("<fg=magenta>Action took <bg=white;fg=black;options=bold>".$minutes." minutes and <bg=white;fg=black;options=bold>".$seconds."</> seconds.</>");
     }
 }
